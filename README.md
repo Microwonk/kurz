@@ -48,6 +48,6 @@ Make sure `base_url` reflects your public domain:
 base_url = "https://kurz.example.com"
 ```
 
-## Features
+## Binary Features
 - livereload: adds `tower-livereload` middleware for faster development
 - disable_auth: disables the login screen and authentication checks
