@@ -1,0 +1,19 @@
+[server]
+host     = "127.0.0.1"
+port     = 3000
+base_url = "http://localhost:3000"
+
+[auth]
+password       = "changeme"
+session_secret = "changeme"
+
+[database]
+path = "urls.db"
+
+[shortener]
+random_string_length = 10
+random_word_count = 3
+word_separator = "-"
+
+[ui]
+accent_color = "#377216"

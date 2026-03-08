@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kurz</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="layout">
+
+    <header>
+      <div class="logo">kurz<span class="cursor"></div>
+      <a href="/logout" class="logout-btn">logout</a>
+    </header>
+
+    <div class="section-label">// new short url</div>
+    <div class="card">
+      <div class="field">
+        <label for="long-url">destination url</label>
+        <input id="long-url" type="url" placeholder="https://example.com/very/long/path" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <label>slug mode</label>
+        <div class="radio-group">
+          <input type="radio" name="mode" id="m-rs" value="random_string" checked>
+          <label for="m-rs">random str</label>
+          <input type="radio" name="mode" id="m-rw" value="random_words">
+          <label for="m-rw">words</label>
+          <input type="radio" name="mode" id="m-cu" value="custom">
+          <label for="m-cu">custom</label>
+        </div>
+        <div id="custom-field">
+          <input id="custom-slug" type="text" placeholder="my-custom-slug">
+        </div>
+      </div>
+
+      <button class="submit-btn" id="shorten-btn">shorten</button>
+    </div>
+
+    <div class="urls-header">
+      <div class="section-label" style="margin:0">// links</div>
+      <div id="url-count"></div>
+    </div>
+    <div id="url-list"></div>
+
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    const BASE = "{base_url}";
+
+    document.querySelectorAll('input[name="mode"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        const cf = document.getElementById('custom-field');
+        cf.classList.toggle('visible', radio.value === 'custom' && radio.checked);
+      });
+    });
+
+    let toastTimer;
+    function toast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.toggle('error', isError);
+      t.classList.add('show');
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    async function loadUrls() {
+      try {
+        const res = await fetch('/api/urls');
+
+        if (!res.ok) {
+          throw new Error();
+        }
+
+        const urls = await res.json();
+        renderUrls(urls);
+      } catch {
+        renderUrls([]);
+      }
+    }
+
+    function renderUrls(urls) {
+      const container = document.getElementById('url-list');
+      const count = document.getElementById('url-count');
+      count.textContent = urls.length === 0 ? '' : `${urls.length} link${urls.length === 1 ? '' : 's'}`;
+
+      if (urls.length === 0) {
+        container.innerHTML = '<div class="empty-state">no links yet - shorten one above</div>';
+        return;
+      }
+
+      container.innerHTML = urls.map(u => `
+        <div class="url-row" data-slug="${u.slug}">
+          <div class="slug-cell" title="${BASE}/${u.slug}">${u.slug}</div>
+          <div class="orig-cell" title="${u.original_url}">${u.original_url}</div>
+          <div class="hits-cell">${u.hit_count} hit${u.hit_count === 1 ? '' : 's'}</div>
+          <div class="row-actions">
+            <button class="icon-btn" onclick="copyUrl('${u.slug}')">copy</button>
+            <button class="icon-btn del" onclick="deleteUrl('${u.slug}')">del</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('shorten-btn').addEventListener('click', async () => {
+      const url = document.getElementById('long-url').value.trim();
+
+      if (!url) {
+        toast('enter a destination url', true); return;
+      }
+
+      const mode = document.querySelector('input[name="mode"]:checked').value;
+      const custom = document.getElementById('custom-slug').value.trim();
+
+      if (mode === 'custom' && !custom) {
+        toast('enter a custom slug', true); return;
+      }
+
+      const btn = document.getElementById('shorten-btn');
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/shorten', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            url,
+            mode,
+            custom_slug: mode === 'custom' ? custom : null,
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          toast(data.error || 'something went wrong', true);
+        } else {
+          document.getElementById('long-url').value = '';
+          document.getElementById('custom-slug').value = '';
+
+          await copyText(`${BASE}/${data.slug}`);
+
+          toast(`created & copied: ${data.slug}`);
+          loadUrls();
+        }
+      } catch (e) {
+        toast(`request failed: ${e}`, true);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    async function copyText(text) {
+      await navigator.clipboard.writeText(text);
+    }
+
+    async function copyUrl(slug) {
+      await copyText(`${BASE}/${slug}`);
+      toast(`copied: ${BASE}/${slug}`);
+    }
+
+    async function deleteUrl(slug) {
+      if (!confirm(`delete /${slug}?`)) {
+        return;
+      }
+
+      const res = await fetch(`/api/urls/${encodeURIComponent(slug)}`, { method: 'DELETE' });
+
+      if (res.ok) {
+        toast(`deleted: ${slug}`);
+        loadUrls();
+      } else {
+        toast('delete failed', true);
+      }
+    }
+
+    loadUrls();
+  </script>
+</body>
+</html>

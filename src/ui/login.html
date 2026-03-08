@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>kurz - authenticate</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="login-card">
+      <div class="logo">kurz<span class="cursor"></span></div>
+      <label for="pw">password</label>
+      <form method="POST" action="/login">
+        <input
+          id="pw"
+          type="password"
+          name="password"
+          autofocus
+          autocomplete="current-password"
+          placeholder="******">
+        <button type="submit">log in</button>
+      </form>
+      {login_error}
+    </div>
+    <footer><a target="_blank" href="https://github.com/Microwonk/kurz">kurz</a> url shortener · version {kurz_version}</footer>
+  </div>
+</body>
+</html>
