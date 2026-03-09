@@ -31,7 +31,6 @@ const WORDS: &[&str] = &[
 
 /// generates a random string with [`CHARSET`]
 pub fn random_string(length: usize) -> String {
-    println!("{}", CHARSET.len());
     let mut rng = rand::rng();
     (0..length)
         .map(|_| {
