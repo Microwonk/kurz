@@ -438,6 +438,11 @@ footer {
   font-style: italic;
 }
 
+.heading-404 {
+  font-size: 12em;
+  color: var(--accent);
+}
+
 @media (max-width: 540px) {
   .url-row {
     grid-template-columns: 1fr auto;

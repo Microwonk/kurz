@@ -9,6 +9,8 @@ use kurz::{AppState, Either, api, auth::SessionStore, config::Config, db::Db, ui
 use std::net::SocketAddr;
 use tracing::info;
 
+const P404: &str = include_str!("ui/404.html");
+
 async fn redirect(
     Path(slug): Path<String>,
     State(state): State<AppState>,
@@ -18,8 +20,13 @@ async fn redirect(
             let _ = state.db.increment_url_hits(&slug);
             Either::Left(Redirect::temporary(&entry.original_url))
         }
-        // TODO: make proper 404 html
-        _ => Either::Right((StatusCode::NOT_FOUND, Html(format!("{slug} not found")))),
+        _ => Either::Right((
+            StatusCode::NOT_FOUND,
+            Html(
+                P404.replace("{slug}", &slug)
+                    .replace("{kurz_version}", std::env!("CARGO_PKG_VERSION")),
+            ),
+        )),
     }
 }
 
