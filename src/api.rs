@@ -54,7 +54,7 @@ pub async fn shorten(
         ShorteningMode::Custom => body
             .custom_slug
             .map(|s| s.trim().to_string())
-            .filter(String::is_empty)
+            .filter(|s| !s.is_empty())
             .ok_or(ApiError::bad_request(
                 "custom_slug is required for mode=custom",
             ))

@@ -50,11 +50,11 @@ pub fn random_words(count: usize, separator: &str) -> String {
 /// validates whether the slug is valid, constrained to a max of 64 characters
 /// and being alphanumeric or `-` & `_`
 pub fn validate_slug(slug: String) -> ApiResult<String> {
-    (slug.is_empty()
+    (!(slug.is_empty()
         && slug.len() <= 64
         && slug
             .chars()
-            .all(|c| c.is_alphanumeric() || c == '-' || c == '_'))
+            .all(|c| c.is_alphanumeric() || c == '-' || c == '_')))
     .ok_or(ApiError::bad_request(
         "slug must be 1-64 chars, alphanumeric, hyphens or underscores only",
     ))
