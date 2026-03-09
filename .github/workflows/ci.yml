@@ -57,7 +57,7 @@ jobs:
       matrix:
         rust: [stable, beta]
         include:
-          - rust: "1.70"
+          - rust: "1.88"
 
     steps:
       - uses: actions/checkout@v4
