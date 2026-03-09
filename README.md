@@ -1,4 +1,4 @@
-# kurz
+# kurz [kʊrts]
 
 A minimal, self-hosted URL shortener built with Rust + Axum.
 
