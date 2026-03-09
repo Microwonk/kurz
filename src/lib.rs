@@ -1,5 +1,3 @@
-#![feature(bool_to_result)]
-
 use axum::{Json, body::Bytes, http::StatusCode, response::IntoResponse};
 use serde::Serialize;
 

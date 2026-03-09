@@ -55,6 +55,7 @@ pub fn validate_slug(slug: String) -> ApiResult<String> {
         && slug
             .chars()
             .all(|c| c.is_alphanumeric() || c == '-' || c == '_')))
+    .then_some(())
     .ok_or(ApiError::bad_request(
         "slug must be 1-64 chars, alphanumeric, hyphens or underscores only",
     ))

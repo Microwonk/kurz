@@ -13,8 +13,13 @@ pub fn authentication_gate(jar: &CookieJar, state: &AppState) -> ApiResult<()> {
         Ok(())
     } else {
         jar.get(SESSION_COOKIE)
-            .map(|c| state.sessions.is_valid(c.value()).is_ok_and(|r| r))
-            .unwrap_or(false)
+            .and_then(|c| {
+                state
+                    .sessions
+                    .is_valid(c.value())
+                    .is_ok_and(|r| r)
+                    .then_some(())
+            })
             .ok_or(ApiError::unauthorized())
     }
 }
