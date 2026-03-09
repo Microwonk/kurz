@@ -2,10 +2,10 @@ use rand::{RngExt, seq::IndexedRandom};
 
 use crate::{ApiError, ApiResult};
 
-/// 62 chars, makes 62^n where n is `random_string_length` in the config
+/// 62 chars, makes 62^n (where n is `random_string_length` in the config) possible urls
 const CHARSET: &[u8] = b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-/// 208 words, makes 208! ≈ 2.411110*10^393 possible urls
+/// 208 words, makes 208^n (where n is `random_word_count` in the config) possible urls
 const WORDS: &[&str] = &[
     "amber", "arch", "atlas", "azure", "bark", "beam", "bell", "birch", "blade", "bloom", "bolt",
     "bond", "brew", "brick", "bridge", "brook", "brush", "calm", "cedar", "chalk", "chart",
