@@ -48,6 +48,23 @@ Make sure `base_url` reflects your public domain:
 base_url = "https://kurz.example.com"
 ```
 
+## Building
+Simply use the Makefile (used as a command-runner in this project):
+```bash
+make build
+```
+or manually via:
+```bash
+cargo run --release
+```
+
+## Developing
+Use `make watch` to watch over all file changes in `rs|html|css` files while developing. It uses [watchexec](https://github.com/watchexec/watchexec), so you'll need to install it first. You can adjust the feature flags (see below) as needed.
+
 ## Binary Features
 - livereload: adds `tower-livereload` middleware for faster development
 - disable_auth: disables the login screen and authentication checks
+
+## Contributing
+Contributions are welcome!
+The project is very minimal, so I won't merge **giant** features, as I want to keep it true to it's core.
