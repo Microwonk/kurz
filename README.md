@@ -18,7 +18,7 @@ $EDITOR my-config.toml
 
 # 2. Build & run
 cargo build --release
-./target/release/urlshort my-config.toml
+./target/release/kurz my-config.toml
 
 # 3. Open http://localhost:3000 in your browser
 ```
